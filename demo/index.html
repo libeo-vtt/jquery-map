@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Map demo</title>
+        <style>
+        .map1 {
+            height: 300px;
+            width: 500px;
+        }
+        </style>
+    </head>
+    <body>
+        <h1>Map demo</h1>
+        <div class="map1">
+            <div class="markers">
+                <div class="marker" data-lat="46.834742" data-lng="-71.297905" data-icon="" data-title="Libéo">
+                    <div class="marker-popup-content">
+                        <span class="title">Libéo</span>
+                        <span class="adress">5700, boul. des Galeries, Bureau 300, Québec QC G2K 0H5</span>
+                    </div>
+                </div>
+                <div class="marker" data-lat="46.834194" data-lng="-71.301401" data-icon="" data-title="Krispe kreme">
+                    <div class="marker-popup-content">
+                        <span class="title">Krispe kreme</span>
+                        <span class="adress">5700, boul. des Galeries, Bureau 300, Québec QC G2K 0H5</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="../bower_components/underscore/underscore.js"></script>
+        <script type="text/javascript" src="../dist/jquery.map.min.js"></script>
+        <script>
+            $('.map1').map({
+                locked: true,
+                htmlMarkers: false,
+                hideHtmlMarkers: true,
+                lat: 46.830396,
+                lng: -71.300340,
+                zoom: 14,
+                htmlMarkers: true,
+                styles: [],
+                markers: [{
+                    lat: 46.830543,
+                    lng: -71.299396,
+                    title: 'Galeries de la Capitale',
+                    infoWindowContent: '<span class="title">Galeries de la Capitale</span>'
+                }]
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "vtt-jquery-map",
+  "version": "0.0.0",
+  "homepage": "",
+  "authors": [
+    "libeo <info@libeo.com>"
+  ],
+  "description": "A jQuery map plugin to create a map.",
+  "main": "dist/jquery.map.js",
+  "private": true,
+  "ignore": [
+    "node_modules"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.2",
+    "underscore": "~1.8.3"
+  },
+  "keywords": "map, jquery, plugin"
+}
