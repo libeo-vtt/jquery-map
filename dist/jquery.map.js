@@ -7,7 +7,8 @@
         this.mapObj = null;
         this.map = null;
 
-        this.config = $.extend({
+        // Default module configuration
+        this.defaults = {
             locked: false,
             htmlMarkers: false,
             hideHtmlMarkers: true,
@@ -16,17 +17,21 @@
             zoom: 0,
             styles: [],
             markers: [],
-            customGlobalClasses: {}
-        }, options || {});
+            classes: {
+                states: {
+                    active: 'is-active'
+                }
+            }
+        };
 
-        this.classes = $.extend({
-            active: 'is-active',
-            open: 'is-open',
-            hover: 'is-hover',
-            clicked: 'is-clicked',
-            extern: 'is-external',
-            error: 'is-error'
-        }, (window.classes !== undefined ? window.classes : this.config.customGlobalClasses) || {});
+        // Merge default classes with window.project.classes
+        this.classes = $.extend(true, this.defaults.classes, (window.project ? window.project.classes : {}));
+
+        // Merge default labels with window.project.labels
+        this.labels = $.extend(true, this.defaults.labels, (window.project ? window.project.labels : {}));
+
+        // Merge default config with custom config
+        this.config = $.extend(true, this.defaults, options || {});
 
         this.init();
     };
@@ -66,7 +71,7 @@
         // Prepare the MAP element, create it and call the function to add markers
         createMap: function() {
             this.mapWrapper.append('<div class="map-inner-wrapper"></div>');
-            this.$mapObj = this.mapWrapper.find(".map-inner-wrapper");
+            this.$mapObj = this.mapWrapper.find('.map-inner-wrapper');
             this.mapObj = this.$mapObj.get(0);
             this.$mapObj.css('height', '100%');
 
@@ -106,22 +111,22 @@
 
         // Add markers via HTML elements
         addMarkersHTML: function() {
-            var $markersWrapper = this.mapWrapper.find(".markers");
-            var lenght = this.mapWrapper.find(".markers > .marker").length;
-            var $markers = this.mapWrapper.find(".marker");
+            var $markersWrapper = this.mapWrapper.find('.markers');
+            var lenght = this.mapWrapper.find('.markers > .marker').length;
+            var $markers = this.mapWrapper.find('.marker');
 
             // Hide HTML markers if config is set to true
             if (this.config.hideHtmlMarkers == true) {
                 $markersWrapper.hide();
             }
 
-            // Look through each markers and put the HTML data into an array
-            // Then call the addMarker function with the marker array
+            // Look through each markers and put the HTML data into an object
+            // Then call the addMarker function with the marker object
             _.each($markers, $.proxy(function(marker) {
-                var markerElement = [];
-                markerElement.position = new window.google.maps.LatLng($(marker).attr("data-lat"), $(marker).attr("data-lng"));
-                markerElement.icon = $(marker).attr("data-icon");
-                markerElement.title = $(marker).attr("data-title");
+                var markerElement = {};
+                markerElement.position = new window.google.maps.LatLng($(marker).attr('data-lat'), $(marker).attr('data-lng'));
+                markerElement.icon = $(marker).attr('data-icon');
+                markerElement.title = $(marker).attr('data-title');
                 markerElement.infoWindowContent = $(marker).html();
 
                 this.addMarker(markerElement);
@@ -134,9 +139,9 @@
         },
 
         // Add marker on map with it's info window
-        // @param marker: array with one marker infos
+        // @param marker: object with one marker infos
         addMarker: function(marker) {
-            var infoWindow = "";
+            var infoWindow = '';
 
             var markerObj = new window.google.maps.Marker({
                 position: marker.position,
@@ -146,7 +151,7 @@
             });
 
             //Add the info window if content not empty
-            if (marker.infoWindowContent != "" && marker.infoWindowContent != null) {
+            if (marker.infoWindowContent != '' && marker.infoWindowContent != null) {
                 infoWindow = new google.maps.InfoWindow({
                     content: marker.infoWindowContent,
                 });
@@ -181,12 +186,12 @@
         // - on mouse leave desactivate the map
         bindLockMapEvents: function() {
             this.mapWrapper.on('click', $.proxy(function() {
-                this.mapWrapper.addClass('is-active');
+                this.mapWrapper.addClass(this.classes.states.active);
                 this.$mapObj.css('pointer-events', 'auto');
             }, this));
 
             this.mapWrapper.on('mouseleave', $.proxy(function() {
-                this.mapWrapper.removeClass('is-active');
+                this.mapWrapper.removeClass(this.classes.states.active);
                 this.$mapObj.css('pointer-events', 'none');
             }, this));
         }
