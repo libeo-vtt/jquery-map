@@ -1,7 +1,5 @@
-# VTT jQuery Map Plugin
-This jQuery plugin purpose is to easily create a Google Map with little configurations.
-
-This plugin automatically adds the HTML markers (or in the JS configuration) on the created map.
+# jQuery Map Plugin
+Create a simple Google Map with markers
 
 ## Usage
 
@@ -35,7 +33,7 @@ This plugin automatically adds the HTML markers (or in the JS configuration) on 
 4. Call the plugin:
 
 	```javascript
-	$("#element").map({
+	$('#element').map({
 		// config
 	});
 	```
