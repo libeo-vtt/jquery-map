@@ -42,6 +42,11 @@ This plugin automatically adds the HTML markers (or in the JS configuration) on 
 
 5. Enjoy your map with markers!
 
+## Downloads
+
+* [Source](https://raw.githubusercontent.com/libeo-vtt/jquery-map/master/dist/jquery.map.js)
+* [Minified version](https://raw.githubusercontent.com/libeo-vtt/jquery-map/master/dist/jquery.map.min.js)
+
 ## Configuration
 
 __The configurations options for the plugin are the following:__
@@ -83,11 +88,6 @@ An array of markers using these options:
         infoWindowContent: '<span>This is the marker 1 location</span>'
     ]
 ```
-
-## Downloads
-
-* [Source](https://raw.githubusercontent.com/libeo-vtt/jquery-map/master/dist/jquery.map.js)
-* [Minified version](https://raw.githubusercontent.com/libeo-vtt/jquery-map/master/dist/jquery.map.min.js)
 
 ## History
 
