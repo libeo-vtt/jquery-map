@@ -1,13 +1,14 @@
 # VTT jQuery Map Plugin
 This jQuery plugin purpose is to easily create a Google Map with little configurations.
-This plugin takes automatically the markers you added in the map HTML container (or in the JS configuration) and adds them on the created map.
+
+This plugin automatically adds the HTML markers (or in the JS configuration) on the created map.
 
 ## Usage
 
 1. Include jQuery and plugin dependencies:
 
 	```html
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="path/to/jquery.min.js"></script>
 	```
 
 2. Include plugin's code:
@@ -40,24 +41,6 @@ This plugin takes automatically the markers you added in the map HTML container 
 	```
 
 5. Enjoy your map with markers!
-
-## Structure
-
-The basic structure of the project is given in the following way:
-
-```
-├── demo/
-│   └── index.html
-├── dist/
-│   ├── jquery.map.js
-│   └── jquery.map.min.js
-├── src/
-│   └── jquery.map.js
-├── .gitignore
-├── bower.json
-├── gulpfile.js
-└── package.json
-```
 
 ## Configuration
 
@@ -101,41 +84,10 @@ An array of markers using these options:
     ]
 ```
 
-#### [demo/](demo)
+## Downloads
 
-Contains a simple HTML file to demonstrate the plugin.
-
-#### [dist/](dist)
-
-This is where the generated files are stored once Gulp runs.
-
-#### [src/](src)
-
-Contains the JavaScript files responsible for the plugin.
-
-#### [.gitignore](.gitignore)
-
-List of files that we don't want Git to track.
-
-> Check this [Git Ignoring Files Guide](https://help.github.com/articles/ignoring-files) for more details.
-
-#### [bower.json](bower.json)
-
-Specify all dependencies loaded via Bower.
-
-> Check [bower.io](http://bower.io//) if you haven't heard about this project yet.
-
-#### [gulpfile.js](gulpfile.js)
-
-Contains all automated tasks using Gulp.
-
-> Check [gulpjs.com](http://gulpjs.com/) if you haven't heard about this project yet.
-
-#### [package.json](package.json)
-
-Specify all dependencies loaded via Node.JS.
-
-> Check [NPM](https://npmjs.org/doc/json.html) for more details.
+* [Source](https://raw.githubusercontent.com/libeo-vtt/jquery-map/master/dist/jquery.map.js)
+* [Minified version](https://raw.githubusercontent.com/libeo-vtt/jquery-map/master/dist/jquery.map.min.js)
 
 ## History
 
