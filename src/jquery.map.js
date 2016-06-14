@@ -18,6 +18,7 @@
             styles: [],
             markers: [],
             classes: {
+                mapInnerWrapper: '',
                 states: {
                     active: 'is-active'
                 }
@@ -136,13 +137,13 @@
                 var $marker = $(marker);
                 markerElement.position = new window.google.maps.LatLng($marker.attr('data-lat'), $marker.attr('data-lng'));
                 // Set marker icon (global or for this one only)
-                if ($marker.attr('data-icon') != '') {
+                if ($marker.attr('data-icon') != '' && $marker.attr('data-icon') != undefined) {
                     markerElement.icon = $marker.attr('data-icon');
                 } else {
                     markerElement.icon = this.markersContainer.attr('data-icon');
                 }
                 // Set marker icon hover (global or for this one only)
-                if ($marker.attr('data-icon-hover') != '') {
+                if ($marker.attr('data-icon-hover') != '' && $marker.attr('data-icon') != undefined) {
                     markerElement.iconHover = $marker.attr('data-icon-hover');
                 } else {
                     markerElement.iconHover = this.markersContainer.attr('data-icon-hover');
