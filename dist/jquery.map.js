@@ -24,6 +24,12 @@
             }
         };
 
+        // Markers
+        this.markers = [];
+
+        // Markers container element
+        this.markersContainer = this.mapWrapper.find('.markers');
+
         // Merge default classes with window.project.classes
         this.classes = $.extend(true, this.defaults.classes, (window.project ? window.project.classes : {}));
 
@@ -115,6 +121,9 @@
             var lenght = this.mapWrapper.find('.markers > .marker').length;
             var $markers = this.mapWrapper.find('.marker');
 
+            // Bind events for html markers hover
+            this.bindHtmlMarkerEvents($markers);
+
             // Hide HTML markers if config is set to true
             if (this.config.hideHtmlMarkers == true) {
                 $markersWrapper.hide();
@@ -124,10 +133,24 @@
             // Then call the addMarker function with the marker object
             _.each($markers, $.proxy(function(marker) {
                 var markerElement = {};
-                markerElement.position = new window.google.maps.LatLng($(marker).attr('data-lat'), $(marker).attr('data-lng'));
-                markerElement.icon = $(marker).attr('data-icon');
-                markerElement.title = $(marker).attr('data-title');
-                markerElement.infoWindowContent = $(marker).html();
+                var $marker = $(marker);
+                markerElement.position = new window.google.maps.LatLng($marker.attr('data-lat'), $marker.attr('data-lng'));
+                // Set marker icon (global or for this one only)
+                if ($marker.attr('data-icon') != '') {
+                    markerElement.icon = $marker.attr('data-icon');
+                } else {
+                    markerElement.icon = this.markersContainer.attr('data-icon');
+                }
+                // Set marker icon hover (global or for this one only)
+                if ($marker.attr('data-icon-hover') != '') {
+                    markerElement.iconHover = $marker.attr('data-icon-hover');
+                } else {
+                    markerElement.iconHover = this.markersContainer.attr('data-icon-hover');
+                }
+                // Set other data
+                markerElement.title = $marker.attr('data-title');
+                markerElement.id = $marker.attr('data-id');
+                markerElement.infoWindowContent = $marker.html();
 
                 this.addMarker(markerElement);
 
@@ -147,38 +170,89 @@
                 position: marker.position,
                 map: this.map,
                 icon: marker.icon,
-                title: marker.title
+                iconDefault: marker.icon,
+                iconHover: marker.iconHover,
+                title: marker.title,
+                customId: marker.id,
             });
+
+            // Add marker to the global array
+            this.markers[marker.id] = markerObj;
+            // Bind events for the marker
+            this.bindMapsMarkerEvents(markerObj);
 
             //Add the info window if content not empty
             if (marker.infoWindowContent != '' && marker.infoWindowContent != null) {
                 infoWindow = new google.maps.InfoWindow({
                     content: marker.infoWindowContent,
                 });
-                this.addInfoWindow(markerObj, infoWindow);
+                this.bindInfoWindowEvent(markerObj, infoWindow);
             }
         },
 
         // Bind info window on marker
-        addInfoWindow: function(marker, infoWindow) {
+        bindInfoWindowEvent: function(marker, infoWindow) {
             marker.addListener('click', function() {
                 infoWindow.open(this.map, marker);
             });
         },
 
-        // Lock the map so you can't scroll in it
-        lockMap: function() {
-            this.$mapObj.css('pointer-events', 'none');
-            this.bindLockMapEvents();
-        },
-
-        // Events binding on the map
+        // Events for the map
         bindMapEvents: function() {
             window.google.maps.event.addDomListener(window, 'resize', $.proxy(function() {
                 var center = this.map.getCenter();
                 window.google.maps.event.trigger(this.map, 'resize');
                 this.map.setCenter(center);
             }, this));
+        },
+
+        // Events on all HTML markers
+        bindHtmlMarkerEvents: function($markers) {
+            $markers.on('mouseenter', $.proxy(function(e) {
+                $element = $(e.currentTarget);
+                this.changeMarkerIcon($element, 'hover');
+            }, this));
+            $markers.on('mouseleave', $.proxy(function(e) {
+                $element = $(e.currentTarget);
+                this.changeMarkerIcon($element, 'default');
+            }, this));
+        },
+
+        // Event on all google maps markers
+        bindMapsMarkerEvents: function(marker) {
+            var $marker = $('[data-id="' + marker.customId + '"]');
+            // Add or remove active class on html markers
+            google.maps.event.addListener(marker, 'mouseover', $.proxy(function() {
+                $marker.addClass(this.classes.states.active);
+                this.changeMarkerIcon($marker, 'hover');
+            }, this));
+            google.maps.event.addListener(marker, 'mouseout', $.proxy(function() {
+                $marker.removeClass(this.classes.states.active);
+                this.changeMarkerIcon($marker, 'default');
+            }, this));
+        },
+
+        // Changer marker icon
+        // @param $marker: marker element (jQuery object or GMAP object)
+        // @param state: define the state of the icon (active or default)
+        changeMarkerIcon: function($marker, state) {
+            var markerObject = this.markers[$marker.attr('data-id')];
+            // Default icon or hover
+            var markerIcon = markerObject.iconDefault;
+            console.log(markerObject);
+            if (state === 'hover') {
+                markerIcon = markerObject.iconHover;
+            }
+            console.log(markerIcon);
+            if (markerIcon != "") {
+                markerObject.setIcon(markerIcon);
+            }
+        },
+
+        // Lock the map so you can't scroll in it
+        lockMap: function() {
+            this.$mapObj.css('pointer-events', 'none');
+            this.bindLockMapEvents();
         },
 
         // Events binding for the locked map
