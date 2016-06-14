@@ -77,7 +77,7 @@
 
         // Prepare the MAP element, create it and call the function to add markers
         createMap: function() {
-            this.mapWrapper.append('<div class="map-inner-wrapper"></div>');
+            this.mapWrapper.append('<div class="map-inner-wrapper ' + this.config.classes.mapInnerWrapper + '"></div>');
             this.$mapObj = this.mapWrapper.find('.map-inner-wrapper');
             this.mapObj = this.$mapObj.get(0);
             this.$mapObj.css('height', '100%');
