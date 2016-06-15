@@ -162,7 +162,7 @@
                 // Set other data
                 markerElement.title = $marker.attr('data-title');
                 markerElement.id = $marker.attr('data-id');
-                markerElement.infoWindowContent = $marker.html();
+                markerElement.infoWindowContent = $marker.find('.marker-popup-content').html();
 
                 this.addMarker(markerElement);
 
