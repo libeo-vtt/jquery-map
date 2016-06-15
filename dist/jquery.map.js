@@ -31,6 +31,9 @@
         // Markers
         this.markers = [];
 
+        // Info windows
+        this.infoWindows = [];
+
         // Markers container element
         this.markersContainer = this.mapWrapper.find('.markers');
 
@@ -198,15 +201,40 @@
                 infoWindow = new google.maps.InfoWindow({
                     content: marker.infoWindowContent,
                 });
+                this.infoWindows.push(infoWindow);
                 this.bindInfoWindowEvent(markerObj, infoWindow);
             }
         },
 
         // Bind info window on marker
         bindInfoWindowEvent: function(marker, infoWindow) {
-            marker.addListener('click', function() {
+            // Marker click event to open info window
+            marker.addListener('click', $.proxy(function() {
+                // Reset all info windows
+                _.each(this.infoWindows, $.proxy(function(infoWindow) {
+                    infoWindow.close();
+                }, this));
+                // Reset all markers
+                _.each(this.markers, $.proxy(function(marker) {
+                    if (marker != undefined) {
+                        this.resetMarker(marker);
+                    }
+                }, this));
+                // Open the infowindow and activate the marker
                 infoWindow.open(this.map, marker);
-            });
+                marker.isClicked = true;
+                this.changeMarkerIcon(marker, 'hover');
+                $('[data-id="' + marker.customId + '"]').addClass(this.config.classes.states.active);
+            }, this));
+            // Info window close click
+            infoWindow.addListener('closeclick', $.proxy(function() {
+                // Reset all markers
+                _.each(this.markers, $.proxy(function(marker) {
+                    if (marker != undefined) {
+                        this.resetMarker(marker);
+                    }
+                }, this));
+            }, this));
         },
 
         // Events for the map
@@ -243,8 +271,10 @@
                 this.changeMarkerIcon(marker, 'hover');
             }, this));
             google.maps.event.addListener(marker, 'mouseout', $.proxy(function() {
-                $marker.removeClass(this.classes.states.active);
-                this.changeMarkerIcon(marker, 'default');
+                if (marker.isClicked !== true) {
+                    $marker.removeClass(this.classes.states.active);
+                    this.changeMarkerIcon(marker, 'default');
+                }
             }, this));
         },
 
@@ -262,7 +292,7 @@
             }
         },
 
-        // Lock the map so you can't scroll in it
+        // Lock the map (remove scroll)
         lockMap: function() {
             this.$mapObj.css('pointer-events', 'none');
             this.bindLockMapEvents();
@@ -283,9 +313,18 @@
             }, this));
         },
 
+        // Reload map and recenter it
         refreshMap: function() {
             window.google.maps.event.trigger(this.map, 'resize');
             this.map.setCenter(new window.google.maps.LatLng(this.config.lat, this.config.lng));
+        },
+
+        // Reset marker to default state
+        // @param marker: marker (GMAP object)
+        resetMarker: function(marker) {
+            marker.isClicked = false;
+            this.changeMarkerIcon(marker, 'default');
+            $('[data-id="' + marker.customId + '"]').removeClass(this.config.classes.states.active);
         }
 
     });
