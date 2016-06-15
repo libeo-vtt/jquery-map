@@ -150,17 +150,45 @@
                 var markerElement = {};
                 var $marker = $(marker);
                 markerElement.position = new window.google.maps.LatLng($marker.attr('data-lat'), $marker.attr('data-lng'));
-                // Set marker icon (global or for this one only)
+                // Set marker icon and (global or for this one only)
                 if ($marker.attr('data-icon') != '' && $marker.attr('data-icon') != undefined) {
                     markerElement.icon = $marker.attr('data-icon');
                 } else {
-                    markerElement.icon = this.markersContainer.attr('data-icon');
+                    if (this.markersContainer.attr('data-icon') != '' && this.markersContainer.attr('data-icon') != undefined) {
+                        markerElement.icon = this.markersContainer.attr('data-icon');
+                    } else {
+                        markerElement.icon = '';
+                    }
                 }
                 // Set marker icon hover (global or for this one only)
-                if ($marker.attr('data-icon-hover') != '' && $marker.attr('data-icon') != undefined) {
+                if ($marker.attr('data-icon-hover') != '' && $marker.attr('data-icon-hover') != undefined) {
                     markerElement.iconHover = $marker.attr('data-icon-hover');
                 } else {
-                    markerElement.iconHover = this.markersContainer.attr('data-icon-hover');
+                    if (this.markersContainer.attr('data-icon-hover') != '' && this.markersContainer.attr('data-icon-hover') != undefined) {
+                        markerElement.iconHover = this.markersContainer.attr('data-icon-hover');
+                    } else {
+                        markerElement.iconHover = '';
+                    }
+                }
+                // Set marker width
+                if ($marker.attr('data-icon-width') != '' && $marker.attr('data-icon-width') != undefined) {
+                    markerElement.iconWidth = parseInt($marker.attr('data-icon-width'));
+                } else {
+                    if (this.markersContainer.attr('data-icon-width') != '' && this.markersContainer.attr('data-icon-width') != undefined) {
+                        markerElement.iconWidth = parseInt(this.markersContainer.attr('data-icon-width'));
+                    } else {
+                        markerElement.iconWidth = '';
+                    }
+                }
+                // Set marker size
+                if ($marker.attr('data-icon-height') != '' && $marker.attr('data-icon-height') != undefined) {
+                    markerElement.iconHeight = parseInt($marker.attr('data-icon-height'));
+                } else {
+                    if (this.markersContainer.attr('data-icon-height') != '' && this.markersContainer.attr('data-icon-height') != undefined) {
+                        markerElement.iconHeight = parseInt(this.markersContainer.attr('data-icon-height'));
+                    } else {
+                        markerElement.iconHeight = '';
+                    }
                 }
                 // Set other data
                 markerElement.title = $marker.attr('data-title');
@@ -180,13 +208,31 @@
         // @param marker: object with one marker infos
         addMarker: function(marker) {
             var infoWindow = '';
+            var icon = marker.icon;
+            var iconHover = marker.iconHover;
+
+            // Set icon with width and height if it's not empty or undefined
+            if (marker.iconWidth !== '' && marker.iconWidth !== undefined &&
+                marker.iconHeight !== '' && marker.iconHeight !== undefined &&
+                marker.icon != '' && marker.icon != undefined &&
+                marker.iconHover != '' && marker.iconHover != undefined) {
+
+                icon = {
+                    url: marker.icon,
+                    scaledSize: new google.maps.Size(marker.iconWidth, marker.iconHeight)
+                };
+                iconHover = {
+                    url: marker.iconHover,
+                    scaledSize: new google.maps.Size(marker.iconWidth, marker.iconHeight)
+                };
+            }
 
             var markerObj = new window.google.maps.Marker({
                 position: marker.position,
                 map: this.map,
-                icon: marker.icon,
-                iconDefault: marker.icon,
-                iconHover: marker.iconHover,
+                icon: icon,
+                iconDefault: icon,
+                iconHover: iconHover,
                 title: marker.title,
                 customId: marker.id,
             });
