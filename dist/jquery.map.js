@@ -25,6 +25,9 @@
             }
         };
 
+        // Map
+        this.map = null;
+
         // Markers
         this.markers = [];
 
@@ -39,6 +42,14 @@
 
         // Merge default config with custom config
         this.config = $.extend(true, this.defaults, options || {});
+
+        // Public methods
+        this.publicMethods = {
+            refreshMap: $.proxy(function() {
+                this.refreshMap();
+            }, this)
+        };
+
 
         this.init();
     };
@@ -208,43 +219,46 @@
         },
 
         // Events on all HTML markers
+        // @param $markers: markers html elements
         bindHtmlMarkerEvents: function($markers) {
             $markers.on('mouseenter', $.proxy(function(e) {
-                $element = $(e.currentTarget);
-                this.changeMarkerIcon($element, 'hover');
+                var markerObject = this.markers[$(e.currentTarget).attr('data-id')];
+                // Change the icon on hover
+                this.changeMarkerIcon(markerObject, 'hover');
             }, this));
             $markers.on('mouseleave', $.proxy(function(e) {
-                $element = $(e.currentTarget);
-                this.changeMarkerIcon($element, 'default');
+                var markerObject = this.markers[$(e.currentTarget).attr('data-id')];
+                // Change the icon on hover
+                this.changeMarkerIcon(markerObject, 'default');
             }, this));
         },
 
         // Event on all google maps markers
+        // @param marker: marker element (GMAP Object)
         bindMapsMarkerEvents: function(marker) {
             var $marker = $('[data-id="' + marker.customId + '"]');
             // Add or remove active class on html markers
             google.maps.event.addListener(marker, 'mouseover', $.proxy(function() {
                 $marker.addClass(this.classes.states.active);
-                this.changeMarkerIcon($marker, 'hover');
+                this.changeMarkerIcon(marker, 'hover');
             }, this));
             google.maps.event.addListener(marker, 'mouseout', $.proxy(function() {
                 $marker.removeClass(this.classes.states.active);
-                this.changeMarkerIcon($marker, 'default');
+                this.changeMarkerIcon(marker, 'default');
             }, this));
         },
 
-        // Changer marker icon
-        // @param $marker: marker element (jQuery object or GMAP object)
+        // Change marker icon
+        // @param marker: marker element (GMAP object)
         // @param state: define the state of the icon (active or default)
-        changeMarkerIcon: function($marker, state) {
-            var markerObject = this.markers[$marker.attr('data-id')];
+        changeMarkerIcon: function(marker, state) {
             // Default icon or hover
-            var markerIcon = markerObject.iconDefault;
+            var markerIcon = marker.iconDefault;
             if (state === 'hover') {
-                markerIcon = markerObject.iconHover;
+                markerIcon = marker.iconHover;
             }
             if (markerIcon != "") {
-                markerObject.setIcon(markerIcon);
+                marker.setIcon(markerIcon);
             }
         },
 
@@ -267,6 +281,10 @@
                 this.mapWrapper.removeClass(this.classes.states.active);
                 this.$mapObj.css('pointer-events', 'none');
             }, this));
+        },
+
+        refreshMap: function() {
+            window.google.maps.event.trigger(this.map, 'resize');
         }
 
     });
