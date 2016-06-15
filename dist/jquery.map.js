@@ -285,6 +285,7 @@
 
         refreshMap: function() {
             window.google.maps.event.trigger(this.map, 'resize');
+            this.map.setCenter(new window.google.maps.LatLng(this.config.lat, this.config.lng));
         }
 
     });
