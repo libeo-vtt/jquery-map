@@ -290,17 +290,24 @@
     });
 
     $.fn.map = function(options) {
-        return this.each(function() {
-            var element = $(this);
+        this.each($.proxy(function(index, element) {
+            var $element = $(element);
 
-            // Return early if this element already has a plugin instance
-            if (element.data('map')) return;
+            // Return early if this $element already has a plugin instance
+            if ($element.data('map')) return;
 
-            // pass options to plugin constructor
-            var map = new Map(this, options);
+            // Pass options to plugin constructor
+            var map = new Map(element, options);
 
-            // Store plugin object in this element's data
-            element.data('map', map);
-        });
+            // Add every public methods to plugin
+            for (var key in map.publicMethods) {
+                this[key] = map.publicMethods[key];
+            }
+
+            // Store plugin object in this $element's data
+            $element.data('map', map);
+        }, this));
+
+        return this;
     };
 })(jQuery);
