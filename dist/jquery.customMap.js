@@ -2,7 +2,7 @@
 // A jQuery map plugin to create a map.
 
 (function($) {
-    var Map = function(element, options) {
+    var CustomMap = function(element, options) {
         this.mapWrapper = $(element);
         this.mapObj = null;
         this.map = null;
@@ -57,7 +57,7 @@
         this.init();
     };
 
-    $.extend(Map.prototype, {
+    $.extend(CustomMap.prototype, {
 
         // Component initialization
         init: function() {
@@ -375,15 +375,15 @@
 
     });
 
-    $.fn.map = function(options) {
+    $.fn.customMap = function(options) {
         this.each($.proxy(function(index, element) {
             var $element = $(element);
 
             // Return early if this $element already has a plugin instance
-            if ($element.data('map')) return;
+            if ($element.data('custom-map')) return;
 
             // Pass options to plugin constructor
-            var map = new Map(element, options);
+            var map = new CustomMap(element, options);
 
             // Add every public methods to plugin
             for (var key in map.publicMethods) {
@@ -391,7 +391,7 @@
             }
 
             // Store plugin object in this $element's data
-            $element.data('map', map);
+            $element.data('custom-map', map);
         }, this));
 
         return this;

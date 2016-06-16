@@ -1,12 +1,12 @@
 {
-  "name": "vtt-jquery-map",
+  "name": "vtt-jquery-custom-map",
   "version": "1.1.10",
   "homepage": "",
   "authors": [
     "libeo <info@libeo.com>"
   ],
-  "description": "A jQuery map plugin to create a map.",
-  "main": "dist/jquery.map.js",
+  "description": "A custom jQuery map plugin to create a map.",
+  "main": "dist/jquery.customMap.js",
   "private": true,
   "ignore": [
     "node_modules"
