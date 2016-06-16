@@ -1,5 +1,5 @@
-# jQuery Map Plugin
-Create a simple Google Map with markers
+# jQuery Cusotm Map Plugin
+Create a simple custom Google Map with markers
 
 ## Usage
 
@@ -12,15 +12,15 @@ Create a simple Google Map with markers
 2. Include plugin's code:
 
 	```html
-	<script src="path/to/jquery.map.js"></script>
+	<script src="path/to/jquery.customMap.js"></script>
 	```
 
 3. Prepare the HTML for the map:
 
 	```html
 	 <div id="element">
-        <div class="markers">
-        	<div class="marker" data-lat="46.834742" data-lng="-71.297905" data-icon="" data-title="Libéo">
+        <div class="markers" data-icon="" data-icon-hover="" data-icon-width="" data-icon-height="">
+        	<div class="marker" data-lat="46.834742" data-lng="-71.297905" data-icon="" data-icon-hover="" data-icon-width="" data-icon-height="" data-title="Libéo">
                 <div class="marker-popup-content">
                     <span class="title">Libéo</span>
                     <span class="adress">5700, boul. des Galeries, Bureau 300, Québec QC G2K 0H5</span>
@@ -80,8 +80,12 @@ A JSON array of the styles you want for the map
 An array of markers using these options:
 ```javascript
     markers: [
-		lat: 46.830543,
+	lat: 46.830543,
         lng: -71.299396,
+        icon: '',
+        iconHover: '',
+        iconWidth: 25,
+        iconHeight: 35,
         title: 'Marker 1',
         infoWindowContent: '<span>This is the marker 1 location</span>'
     ]
