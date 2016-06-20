@@ -113,13 +113,7 @@
                 this.addMarkersHTML();
             }
             if (this.config.fitCenterMarkers === true) {
-                var bounds = new google.maps.LatLngBounds();
-                _.each(this.markers, $.proxy(function(marker) {
-                    if (marker != undefined) {
-                        bounds.extend(marker.getPosition());
-                    }
-                }, this));
-                this.map.fitBounds(bounds);
+                this.fitCenterBounds();
             }
             if (this.config.locked === true) {
                 this.lockMap();
@@ -372,7 +366,22 @@
         // Reload map and recenter it
         refreshMap: function() {
             window.google.maps.event.trigger(this.map, 'resize');
-            this.map.setCenter(new window.google.maps.LatLng(this.config.lat, this.config.lng));
+            if (this.config.fitCenterMarkers === true) {
+                this.fitCenterBounds();
+            } else {
+                this.map.setCenter(new window.google.maps.LatLng(this.config.lat, this.config.lng));
+            }
+        },
+
+        // Fit bounds map
+        fitCenterBounds: function() {
+            var bounds = new google.maps.LatLngBounds();
+            _.each(this.markers, $.proxy(function(marker) {
+                if (marker != undefined) {
+                    bounds.extend(marker.getPosition());
+                }
+            }, this));
+            this.map.fitBounds(bounds);
         },
 
         // Reset marker to default state
