@@ -61,6 +61,10 @@ Whether you want to hide the added HTML markers or not
 ```javascript
     hideHtmlMarkers: boolean //default is true
 ```
+Adjust the center and zoom of the map so all markers are visible
+```javascript
+    fitCenterMarkers: boolean //default is true
+```
 The latitude of the center of the map
 ```javascript
 	lat: 0

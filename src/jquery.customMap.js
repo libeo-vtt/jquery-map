@@ -12,6 +12,7 @@
             locked: false,
             htmlMarkers: false,
             hideHtmlMarkers: true,
+            fitCenterMarkers: true,
             lat: 0,
             lng: 0,
             zoom: 0,
@@ -108,10 +109,19 @@
             this.bindMapEvents();
             this.addMarkersJs();
 
-            if (this.config.htmlMarkers == true) {
+            if (this.config.htmlMarkers === true) {
                 this.addMarkersHTML();
             }
-            if (this.config.locked == true) {
+            if (this.config.fitCenterMarkers === true) {
+                var bounds = new google.maps.LatLngBounds();
+                _.each(this.markers, $.proxy(function(marker) {
+                    if (marker != undefined) {
+                        bounds.extend(marker.getPosition());
+                    }
+                }, this));
+                this.map.fitBounds(bounds);
+            }
+            if (this.config.locked === true) {
                 this.lockMap();
             }
         },
@@ -140,7 +150,7 @@
             this.bindHtmlMarkerEvents($markers);
 
             // Hide HTML markers if config is set to true
-            if (this.config.hideHtmlMarkers == true) {
+            if (this.config.hideHtmlMarkers === true) {
                 $markersWrapper.hide();
             }
 
