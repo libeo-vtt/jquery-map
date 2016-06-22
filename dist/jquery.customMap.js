@@ -10,8 +10,7 @@
         // Default module configuration
         this.defaults = {
             locked: false,
-            htmlMarkers: false,
-            hideHtmlMarkers: true,
+            markersSelector: '.marker',
             fitCenterMarkers: true,
             lat: 0,
             lng: 0,
@@ -29,15 +28,6 @@
         // Map
         this.map = null;
 
-        // Markers
-        this.markers = [];
-
-        // Info windows
-        this.infoWindows = [];
-
-        // Markers container element
-        this.markersContainer = this.mapWrapper.find('.markers');
-
         // Merge default classes with window.project.classes
         this.classes = $.extend(true, this.defaults.classes, (window.project ? window.project.classes : {}));
 
@@ -46,6 +36,15 @@
 
         // Merge default config with custom config
         this.config = $.extend(true, this.defaults, options || {});
+
+        // HTML Markers
+        this.$htmlMarkers = $(this.config.markersSelector);
+
+        // Markers
+        this.markers = [];
+
+        // Info windows
+        this.infoWindows = [];
 
         // Public methods
         this.publicMethods = {
@@ -92,8 +91,8 @@
 
         // Prepare the MAP element, create it and call the function to add markers
         createMap: function() {
-            this.mapWrapper.append('<div class="map-inner-wrapper ' + this.config.classes.mapInnerWrapper + '"></div>');
-            this.$mapObj = this.mapWrapper.find('.map-inner-wrapper');
+            this.mapWrapper.html('<div class="' + this.config.classes.mapInnerWrapper + '"></div>');
+            this.$mapObj = this.mapWrapper.find('.' + this.config.classes.mapInnerWrapper);
             this.mapObj = this.$mapObj.get(0);
             this.$mapObj.css('height', '100%');
 
@@ -109,7 +108,7 @@
             this.bindMapEvents();
             this.addMarkersJs();
 
-            if (this.config.htmlMarkers === true) {
+            if (this.$htmlMarkers.length > 0) {
                 this.addMarkersHTML();
             }
             if (this.config.fitCenterMarkers === true) {
@@ -128,7 +127,7 @@
                 this.addMarker(marker);
 
                 if (length > 1) {
-                    this.bounds.extend(position);
+                    this.bounds.extend(marker.position);
                     this.map.fitBounds(this.bounds);
                 }
             }, this));
@@ -136,30 +135,22 @@
 
         // Add markers via HTML elements
         addMarkersHTML: function() {
-            var $markersWrapper = this.mapWrapper.find('.markers');
-            var lenght = this.mapWrapper.find('.markers > .marker').length;
-            var $markers = this.mapWrapper.find('.marker');
-
             // Bind events for html markers hover
-            this.bindHtmlMarkerEvents($markers);
-
-            // Hide HTML markers if config is set to true
-            if (this.config.hideHtmlMarkers === true) {
-                $markersWrapper.hide();
-            }
+            this.bindHtmlMarkerEvents(this.$htmlMarkers);
 
             // Look through each markers and put the HTML data into an object
             // Then call the addMarker function with the marker object
-            _.each($markers, $.proxy(function(marker) {
+            _.each(this.$htmlMarkers, $.proxy(function(marker) {
                 var markerElement = {};
                 var $marker = $(marker);
+
                 markerElement.position = new window.google.maps.LatLng($marker.attr('data-lat'), $marker.attr('data-lng'));
                 // Set marker icon and (global or for this one only)
                 if ($marker.attr('data-icon') != '' && $marker.attr('data-icon') != undefined) {
                     markerElement.icon = $marker.attr('data-icon');
                 } else {
-                    if (this.markersContainer.attr('data-icon') != '' && this.markersContainer.attr('data-icon') != undefined) {
-                        markerElement.icon = this.markersContainer.attr('data-icon');
+                    if (this.mapWrapper.attr('data-icon') != '' && this.mapWrapper.attr('data-icon') != undefined) {
+                        markerElement.icon = this.mapWrapper.attr('data-icon');
                     } else {
                         markerElement.icon = '';
                     }
@@ -168,8 +159,8 @@
                 if ($marker.attr('data-icon-hover') != '' && $marker.attr('data-icon-hover') != undefined) {
                     markerElement.iconHover = $marker.attr('data-icon-hover');
                 } else {
-                    if (this.markersContainer.attr('data-icon-hover') != '' && this.markersContainer.attr('data-icon-hover') != undefined) {
-                        markerElement.iconHover = this.markersContainer.attr('data-icon-hover');
+                    if (this.mapWrapper.attr('data-icon-hover') != '' && this.mapWrapper.attr('data-icon-hover') != undefined) {
+                        markerElement.iconHover = this.mapWrapper.attr('data-icon-hover');
                     } else {
                         markerElement.iconHover = '';
                     }
@@ -178,8 +169,8 @@
                 if ($marker.attr('data-icon-width') != '' && $marker.attr('data-icon-width') != undefined) {
                     markerElement.iconWidth = parseInt($marker.attr('data-icon-width'));
                 } else {
-                    if (this.markersContainer.attr('data-icon-width') != '' && this.markersContainer.attr('data-icon-width') != undefined) {
-                        markerElement.iconWidth = parseInt(this.markersContainer.attr('data-icon-width'));
+                    if (this.mapWrapper.attr('data-icon-width') != '' && this.mapWrapper.attr('data-icon-width') != undefined) {
+                        markerElement.iconWidth = parseInt(this.mapWrapper.attr('data-icon-width'));
                     } else {
                         markerElement.iconWidth = '';
                     }
@@ -188,8 +179,8 @@
                 if ($marker.attr('data-icon-height') != '' && $marker.attr('data-icon-height') != undefined) {
                     markerElement.iconHeight = parseInt($marker.attr('data-icon-height'));
                 } else {
-                    if (this.markersContainer.attr('data-icon-height') != '' && this.markersContainer.attr('data-icon-height') != undefined) {
-                        markerElement.iconHeight = parseInt(this.markersContainer.attr('data-icon-height'));
+                    if (this.mapWrapper.attr('data-icon-height') != '' && this.mapWrapper.attr('data-icon-height') != undefined) {
+                        markerElement.iconHeight = parseInt(this.mapWrapper.attr('data-icon-height'));
                     } else {
                         markerElement.iconHeight = '';
                     }
@@ -201,8 +192,8 @@
 
                 this.addMarker(markerElement);
 
-                if (length > 1) {
-                    this.bounds.extend(position);
+                if (this.$htmlMarkers.length > 1) {
+                    this.bounds.extend(markerElement.position);
                     this.map.fitBounds(this.bounds);
                 }
             }, this));
@@ -238,7 +229,7 @@
                 iconDefault: icon,
                 iconHover: iconHover,
                 title: marker.title,
-                customId: marker.id,
+                customId: marker.id
             });
 
             // Add marker to the global array
@@ -249,7 +240,7 @@
             //Add the info window if content not empty
             if (marker.infoWindowContent != '' && marker.infoWindowContent != null) {
                 infoWindow = new google.maps.InfoWindow({
-                    content: marker.infoWindowContent,
+                    content: marker.infoWindowContent
                 });
                 this.infoWindows.push(infoWindow);
                 this.bindInfoWindowEvent(markerObj, infoWindow);
@@ -337,7 +328,7 @@
             if (state === 'hover') {
                 markerIcon = marker.iconHover;
             }
-            if (markerIcon != "") {
+            if (markerIcon != '') {
                 marker.setIcon(markerIcon);
             }
         },
