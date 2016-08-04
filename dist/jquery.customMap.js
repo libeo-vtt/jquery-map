@@ -9,6 +9,7 @@
 
         // Default module configuration
         this.defaults = {
+            key: '',
             locked: false,
             markersSelector: '.marker',
             fitCenterMarkers: true,
@@ -72,10 +73,14 @@
         // Load the google map API
         loadAPI: function() {
             window.googleAPI = true;
+            var otherParams = 'sensor=false';
+            if(this.config.key != '') {
+                otherParams = otherParams + '&key=' + this.config.key;
+            }
             $.getScript('https://www.google.com/jsapi', $.proxy(function() {
                 if (!window.google.maps) {
                     google.load('maps', '3', {
-                        other_params: 'sensor=false',
+                        other_params: otherParams,
                         callback: $.proxy(function() {
                             // Trigger global event to initialize maps
                             $(window).trigger('googleAPI');
