@@ -16,6 +16,8 @@
             lat: 0,
             lng: 0,
             zoom: 0,
+            maxZoom: 18,
+            minZoom: 0,
             styles: [],
             markers: [],
             classes: {
@@ -107,6 +109,8 @@
                 disableDefaultUI: true,
                 center: new window.google.maps.LatLng(this.config.lat, this.config.lng),
                 zoom: this.config.zoom,
+                maxZoom: this.config.maxZoom,
+                minZoom: this.config.minZoom,
                 styles: this.config.styles
             });
 
