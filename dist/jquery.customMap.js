@@ -75,6 +75,7 @@
         // Load the google map API
         loadAPI: function() {
             var otherParams = 'sensor=false';
+            window.googleAPI = true;
             if (this.config.key != '') {
                 otherParams = otherParams + '&key=' + this.config.key;
             }
@@ -85,7 +86,6 @@
                         callback: $.proxy(function() {
                             // Trigger global event to initialize maps
                             $(window).trigger('googleAPI');
-                            window.googleAPI = true;
                         }, this)
                     });
                 }
