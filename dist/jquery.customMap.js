@@ -67,16 +67,18 @@
             // Check if the API is already loaded
             if (!window.googleAPI) {
                 this.loadAPI();
+                // Global event after the Google Map API is loaded
+                $(window).on('googleAPI', $.proxy(this.callback, this));
+            } else {
+                this.callback();
             }
-            // Global event after the Google Map API is loaded
-            $(window).on('googleAPI', $.proxy(this.callback, this));
         },
 
         // Load the google map API
         loadAPI: function() {
-            window.googleAPI = true;
             var otherParams = 'sensor=false';
-            if(this.config.key != '') {
+            window.googleAPI = true;
+            if (this.config.key != '') {
                 otherParams = otherParams + '&key=' + this.config.key;
             }
             $.getScript('https://www.google.com/jsapi', $.proxy(function() {
