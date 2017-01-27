@@ -11,6 +11,7 @@
         this.defaults = {
             key: '',
             locked: false,
+            loadAPI: true,
             markersSelector: '.marker',
             fitCenterMarkers: true,
             lat: 0,
@@ -64,12 +65,17 @@
 
         // Component initialization
         init: function() {
-            // Check if the API is already loaded
-            if (!window.googleAPI) {
-                this.loadAPI();
+            // If api is loaded via the plugin or not
+            if (this.config.loadAPI) {
+                // Check if the API is already loaded
+                if (!window.googleAPI) {
+                    this.loadAPI();
+                }
+                // Global event after the Google Map API is loaded
+                $(window).on('googleAPI', $.proxy(this.callback, this));
+            } else {
+                this.createMap();
             }
-            // Global event after the Google Map API is loaded
-            $(window).on('googleAPI', $.proxy(this.callback, this));
         },
 
         // Load the google map API
