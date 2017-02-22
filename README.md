@@ -1,4 +1,4 @@
-# jQuery Cusotm Map Plugin
+# jQuery Custom Map Plugin
 Create a simple custom Google Map with markers
 
 ## Usage
