@@ -21,6 +21,10 @@
             minZoom: 0,
             styles: [],
             markers: [],
+            geoJson: null,
+            featuresStyles: null,
+            events: null,
+            infobox: false,
             classes: {
                 mapInnerWrapper: '',
                 states: {
@@ -90,8 +94,16 @@
                     google.load('maps', '3', {
                         other_params: otherParams,
                         callback: $.proxy(function() {
-                            // Trigger global event to initialize maps
-                            $(window).trigger('googleAPI');
+                            if(this.config.infobox){
+                                jQuery.getScript(this.config.infobox,$.proxy(function() {
+                                    // Trigger global event to initialize maps
+                                    $(window).trigger('googleAPI');
+                                }, this));
+                            }
+                            else{
+                                // Trigger global event to initialize maps
+                                $(window).trigger('googleAPI');
+                            }
                         }, this)
                     });
                 }
@@ -126,6 +138,20 @@
             if (this.$htmlMarkers.length > 0) {
                 this.addMarkersHTML();
             }
+            if (this.config.geoJson) {
+                this.map.data.loadGeoJson(this.config.geoJson);
+            }
+            if (this.config.featuresStyles) {
+                if ($.isFunction( this.config.featuresStyles )) {
+                    this.map.data.setStyle($.proxy(this.config.featuresStyles,null,this.map));
+                }
+                else{
+                    this.map.data.setStyle(this.config.featuresStyles);
+                }
+            }
+            if (this.config.events) {
+                this.config.events(this.map);
+            }
             if (this.config.fitCenterMarkers === true) {
                 this.fitCenterBounds();
             }
@@ -158,6 +184,10 @@
             _.each(this.$htmlMarkers, $.proxy(function(marker) {
                 var markerElement = {};
                 var $marker = $(marker);
+
+                if(!$marker.attr('data-lat') || parseFloat($marker.attr('data-lat')) == 0 || !$marker.attr('data-lng') || parseFloat($marker.attr('data-lng')) == 0) {
+                    return;
+                }
 
                 markerElement.position = new window.google.maps.LatLng($marker.attr('data-lat'), $marker.attr('data-lng'));
                 // Set marker icon and (global or for this one only)
@@ -254,11 +284,39 @@
 
             //Add the info window if content not empty
             if (marker.infoWindowContent != '' && marker.infoWindowContent != null) {
-                infoWindow = new google.maps.InfoWindow({
-                    content: marker.infoWindowContent
-                });
-                this.infoWindows.push(infoWindow);
-                this.bindInfoWindowEvent(markerObj, infoWindow);
+
+                if(this.config.infobox){
+
+                    var options = {
+                        content: marker.infoWindowContent,
+                        disableAutoPan: false,
+                        maxWidth: 0,
+                        pixelOffset: new google.maps.Size(-100, 0),
+                        zIndex: null,
+                        boxStyle: {
+                            background: "transparent",
+                            opacity: 1,
+                            width: "200px"
+                        },
+                        closeBoxMargin: "0px 0px 0px 0px",
+                        closeBoxURL: false,
+                        infoBoxClearance: new google.maps.Size(1, 1),
+                        isHidden: false,
+                        pane: "floatPane",
+                        enableEventPropagation: false
+                    };
+                    var infoOpts = $.extend(true, this.config.infobox, options || {});
+                    infoWindow = new InfoBox(infoOpts);
+                    this.infoWindows.push(infoWindow);
+                    this.bindInfoWindowEvent(markerObj, infoWindow);
+                }
+                else{
+                    infoWindow = new google.maps.InfoWindow({
+                        content: marker.infoWindowContent
+                    });
+                    this.infoWindows.push(infoWindow);
+                    this.bindInfoWindowEvent(markerObj, infoWindow);
+                }
             }
         },
 
@@ -338,13 +396,15 @@
         // @param marker: marker element (GMAP object)
         // @param state: define the state of the icon (active or default)
         changeMarkerIcon: function(marker, state) {
-            // Default icon or hover
-            var markerIcon = marker.iconDefault;
-            if (state === 'hover') {
-                markerIcon = marker.iconHover;
-            }
-            if (markerIcon != '') {
-                marker.setIcon(markerIcon);
+            if(marker){
+                // Default icon or hover
+                var markerIcon = marker.iconDefault;
+                if (state === 'hover') {
+                    markerIcon = marker.iconHover;
+                }
+                if (markerIcon != '') {
+                    marker.setIcon(markerIcon);
+                }
             }
         },
 
@@ -381,13 +441,17 @@
 
         // Fit bounds map
         fitCenterBounds: function() {
-            var bounds = new google.maps.LatLngBounds();
-            _.each(this.markers, $.proxy(function(marker) {
-                if (marker != undefined) {
-                    bounds.extend(marker.getPosition());
-                }
-            }, this));
-            this.map.fitBounds(bounds);
+            if(this.markers.length > 1){
+                var bounds = new google.maps.LatLngBounds();
+                _.each(this.markers, $.proxy(function(marker) {
+                    if (marker != undefined) {
+                        bounds.extend(marker.getPosition());
+                    }
+                }, this));
+                this.map.fitBounds(bounds);
+            } else {
+                this.map.setCenter(new window.google.maps.LatLng(this.config.lat, this.config.lng));
+            }
         },
 
         // Reset marker to default state
